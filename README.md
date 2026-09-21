@@ -12,7 +12,7 @@ An end-to-end sports analytics and machine learning system evaluating **18,278 p
 
 ## 📌 Table of Contents
 1. [Executive Summary & Problem Statement](#-executive-summary--problem-statement)
-2. [Interactive Web Dashboard (`index.html`)](#-interactive-web-dashboard-indexhtml)
+2. [Interactive Web Dashboard ("https://babiazees007.github.io/FIFA_20_Player_Skill_analysis/")](#-interactive-web-dashboard-https://babiazees007.github.io/FIFA_20_Player_Skill_analysis/)
 3. [Repository Structure](#-repository-structure)
 4. [Task 3: Resolution of Core Business Questions](#-task-3-resolution-of-core-business-questions)
    - [Q1: Top 10 Player Producing Nations](#q1-top-10-player-producing-nations)

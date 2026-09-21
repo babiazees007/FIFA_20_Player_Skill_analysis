@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRCP-1004: FIFA 20 Player Intelligence & Clustering Showcase</title>
+  <meta name="description" content="Comprehensive project showcase for PRCP-1004: FIFA 20 Player Skill Analysis, Unsupervised Machine Learning Clustering, and Strategic Business Problem Solutions.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js CDN for interactive visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-card: rgba(18, 25, 41, 0.75);
+      --bg-card-hover: rgba(26, 36, 58, 0.85);
+      --bg-pill: rgba(255, 255, 255, 0.06);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-highlight: rgba(0, 242, 254, 0.3);
+      
+      --accent-cyan: #00f2fe;
+      --accent-blue: #4facfe;
+      --accent-emerald: #00f5a0;
+      --accent-purple: #9d4edd;
+      --accent-gold: #ffb703;
+      --accent-rose: #ff4d6d;
+      
+      --text-main: #f0f4f8;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
+      --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.3);
+      --shadow-glow-cyan: 0 0 35px rgba(0, 242, 254, 0.15);
+      --shadow-glow-emerald: 0 0 35px rgba(0, 245, 160, 0.15);
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(79, 172, 254, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 40%, rgba(157, 78, 221, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 50% 85%, rgba(0, 245, 160, 0.06) 0%, transparent 45%);
+      background-attachment: fixed;
+    }
+
+    /* Ambient background grid */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    /* Header & Navigation */
+    header {
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(9, 13, 22, 0.85);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+
+    .nav-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 74px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: #fff;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      color: #050b14;
+      font-weight: 800;
+      font-size: 0.85rem;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      letter-spacing: 0.5px;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    /* Hero Section */
+    .hero-section {
+      padding: 80px 0 50px;
+      position: relative;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      border-radius: 50px;
+      color: var(--accent-cyan);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .hero-tag .dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent-emerald);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-emerald);
+    }
+
+    .hero-title {
+      font-size: 3.2rem;
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+
+    .hero-title .gradient-text {
+      background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 75%, var(--accent-emerald) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1.22rem;
+      color: var(--text-muted);
+      max-width: 860px;
+      line-height: 1.7;
+      margin-bottom: 36px;
+    }
+
+    /* KPI Highlights Bar */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 30px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-highlight);
+      box-shadow: var(--shadow-glow-cyan);
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px; height: 100%;
+      background: var(--accent-cyan);
+      opacity: 0.8;
+    }
+
+    .kpi-card.kpi-green::before { background: var(--accent-emerald); }
+    .kpi-card.kpi-purple::before { background: var(--accent-purple); }
+    .kpi-card.kpi-gold::before { background: var(--accent-gold); }
+
+    .kpi-val {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #fff;
+      font-family: var(--font-mono);
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .kpi-val span {
+      font-size: 1rem;
+      color: var(--accent-cyan);
+      font-weight: 500;
+    }
+
+    .kpi-label {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-top: 4px;
+    }
+
+    .kpi-sub {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* Section Styles */
+    section {
+      padding: 60px 0;
+    }
+
+    .section-header {
+      margin-bottom: 40px;
+    }
+
+    .section-badge {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-cyan);
+      display: inline-block;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 780px;
+      margin-top: 8px;
+    }
+
+    /* Glass Panels */
+    .glass-panel {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Two Column Layout */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    /* Question Solution Cards */
+    .solution-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .solution-card:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .q-number-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      width: fit-content;
+      margin-bottom: 16px;
+    }
+
+    .q-pill-1 { background: rgba(0, 242, 254, 0.12); color: var(--accent-cyan); border: 1px solid rgba(0, 242, 254, 0.3); }
+    .q-pill-2 { background: rgba(0, 245, 160, 0.12); color: var(--accent-emerald); border: 1px solid rgba(0, 245, 160, 0.3); }
+    .q-pill-3 { background: rgba(255, 183, 3, 0.12); color: var(--accent-gold); border: 1px solid rgba(255, 183, 3, 0.3); }
+
+    .q-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.35;
+      color: #fff;
+    }
+
+    .q-verdict {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--accent-emerald);
+      padding: 14px 18px;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      margin: 16px 0 20px;
+    }
+
+    .q-verdict.gold-verdict { border-left-color: var(--accent-gold); }
+    .q-verdict.cyan-verdict { border-left-color: var(--accent-cyan); }
+
+    .verdict-heading {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .verdict-text {
+      font-size: 0.98rem;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      min-height: 280px;
+      margin-top: 15px;
+    }
+
+    /* Comparison Table */
+    .data-table-wrapper {
+      overflow-x: auto;
+      margin-top: 18px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+
+    table.data-table th {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+      white-space: nowrap;
+    }
+
+    table.data-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      color: var(--text-main);
+    }
+
+    table.data-table tr:hover td {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .pill-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+
+    .pill-cyan { background: rgba(0, 242, 254, 0.15); color: var(--accent-cyan); }
+    .pill-green { background: rgba(0, 245, 160, 0.15); color: var(--accent-emerald); }
+    .pill-gold { background: rgba(255, 183, 3, 0.15); color: var(--accent-gold); }
+    .pill-purple { background: rgba(157, 78, 221, 0.15); color: #c77dff; }
+
+    /* Tactical Archetypes Card Grid */
+    .archetype-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .archetype-card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-4px);
+    }
+
+    .archetype-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+
+    .archetype-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .archetype-players {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+
+    .archetype-players strong {
+      color: #fff;
+    }
+
+    .stat-bar-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .stat-bar-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+    }
+
+    .stat-bar-outer {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      margin: 0 12px;
+      overflow: hidden;
+    }
+
+    .stat-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+    }
+
+    .stat-val {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: #fff;
+      width: 32px;
+      text-align: right;
+    }
+
+    /* Challenge Accordion */
+    .challenge-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      margin-bottom: 14px;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .challenge-card:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .challenge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .challenge-title-box {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .challenge-number {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      background: rgba(0, 242, 254, 0.1);
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+    }
+
+    .challenge-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .challenge-chevron {
+      color: var(--text-muted);
+      transition: transform 0.3s ease;
+    }
+
+    .challenge-card.active .challenge-chevron {
+      transform: rotate(180deg);
+      color: var(--accent-cyan);
+    }
+
+    .challenge-body {
+      display: none;
+      padding-top: 18px;
+      margin-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.94rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .challenge-card.active .challenge-body {
+      display: block;
+    }
+
+    .challenge-solution-box {
+      margin-top: 12px;
+      background: rgba(0, 245, 160, 0.04);
+      border: 1px solid rgba(0, 245, 160, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      color: #d1fae5;
+      font-size: 0.9rem;
+    }
+
+    .challenge-solution-box strong {
+      color: var(--accent-emerald);
+    }
+
+    /* Workflow Pipeline */
+    .pipeline-wrapper {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      position: relative;
+    }
+
+    .pipeline-step {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      position: relative;
+    }
+
+    .pipeline-step::after {
+      content: "➔";
+      position: absolute;
+      right: -14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--accent-cyan);
+      font-size: 1.1rem;
+      z-index: 2;
+    }
+
+    .pipeline-step:last-child::after {
+      display: none;
+    }
+
+    .step-idx {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .step-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .step-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Architecture Callout */
+    .recommendation-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 95, 70, 0.12));
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      margin-top: 30px;
+    }
+
+    .rec-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--accent-emerald);
+      color: #032014;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+      margin-top: 60px;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .hero-title { font-size: 2.4rem; }
+      .pipeline-step::after { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      .hero-title { font-size: 1.9rem; }
+      .nav-links { display: none; }
+      .container { padding: 0 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Navbar -->
+  <header>
+    <div class="container nav-wrapper">
+      <a href="#overview" class="brand">
+        <span class="brand-badge">PRCP-1004</span>
+        <span class="brand-title">FIFA 20 Tactical Intelligence</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#overview">What It Does</a></li>
+        <li><a href="#business-solutions">What We Solved</a></li>
+        <li><a href="#machine-learning">ML Clustering</a></li>
+        <li><a href="#archetypes">Tactical Archetypes</a></li>
+        <li><a href="#challenges">Engineering Feats</a></li>
+        <li><a href="#production">Production Strategy</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- HERO SECTION -->
+    <section class="hero-section" id="overview">
+      <div class="hero-tag">
+        <span class="dot"></span> End-to-End Sports Analytics & Machine Learning Pipeline
+      </div>
+      <h1 class="hero-title">
+        FIFA 20 Player Skill Analysis, <br>
+        <span class="gradient-text">Unsupervised Clustering & Tactical Intelligence</span>
+      </h1>
+      <p class="hero-desc">
+        A rigorous data science system solving real-world football scouting, compensation dynamics, and positional modeling. We transformed 18,278 multi-dimensional player profiles into mathematical archetypes, resolved critical talent pipeline questions, and engineered low-latency unsupervised models ready for production.
+      </p>
+
+      <!-- KPI Grid -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-val">18,278</div>
+          <div class="kpi-label">Global Footballers</div>
+          <div class="kpi-sub">Audited across 104+ technical metrics</div>
+        </div>
+        <div class="kpi-card kpi-green">
+          <div class="kpi-val">16,242</div>
+          <div class="kpi-label">Outfield Players Clustered</div>
+          <div class="kpi-sub">37-dimensional standardized skill space</div>
+        </div>
+        <div class="kpi-card kpi-purple">
+          <div class="kpi-val">4 <span>Archetypes</span></div>
+          <div class="kpi-label">Discovered Clusters</div>
+          <div class="kpi-sub">Pure style discovery without target leakage</div>
+        </div>
+        <div class="kpi-card kpi-gold">
+          <div class="kpi-val">3 <span>Core Qs</span></div>
+          <div class="kpi-label">Executive Problems Solved</div>
+          <div class="kpi-sub">Nations, Career Horizon & Wage Paradox</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 1: WHAT DOES THE PROJECT DO? -->
+    <section id="what-it-does">
+      <div class="section-header">
+        <span class="section-badge">Core Purpose & System Scope</span>
+        <h2 class="section-title">What Does This Project Do?</h2>
+        <p class="section-subtitle">
+          Modern football scouting suffers from cognitive biases, superficial overall ratings, and inflated transfer valuations. This project replaces guesswork with quantitative tactical intelligence.
+        </p>
+      </div>
+
+      <div class="glass-panel" style="margin-bottom: 30px;">
+        <div class="grid-2" style="align-items: center;">
+          <div>
+            <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 14px;">The Tactical Intelligence Engine</h3>
+            <p style="color: var(--text-muted); margin-bottom: 16px;">
+              The platform ingests granular player performance simulation data from EA Sports FIFA 20, cleans algebraic modifier strings (e.g. <code style="color: var(--accent-cyan); font-family: var(--font-mono);">'89+2'</code> into 91), decouples compound work-rate strings, and normalizes technical, athletic, and positional capabilities.
+            </p>
+            <p style="color: var(--text-muted); margin-bottom: 16px;">
+              Crucially, the system <strong>strictly excludes synthetic overall ratings and commercial popularity metrics</strong> from model inputs to prevent target leakage. As a result, players are grouped strictly according to <em>how they play</em> rather than <em>how famous they are</em>.
+            </p>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+              <span class="pill-tag pill-cyan">Regex String Evaluator</span>
+              <span class="pill-tag pill-green">StandardScaler Normalization</span>
+              <span class="pill-tag pill-purple">PCA Variance Reduction (9 PCs = 80%)</span>
+              <span class="pill-tag pill-gold">4 Unsupervised ML Algorithms</span>
+            </div>
+          </div>
+          <div style="background: rgba(0,0,0,0.3); border-radius: var(--radius-md); padding: 24px; border: 1px solid var(--border-color);">
+            <h4 style="color: var(--accent-cyan); font-size: 0.95rem; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px;">Architectural Highlights</h4>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; color: var(--text-muted); font-size: 0.92rem;">
+              <li style="display: flex; gap: 10px;">
+                <span style="color: var(--accent-emerald);">✔</span>
+                <span><strong>Structural Segmentation:</strong> Goalkeepers isolated from outfield players to prevent mathematical distance distortion.</span>
+              </li>
+              <li style="display: flex; gap: 10px;">
+                <span style="color: var(--accent-emerald);">✔</span>
+                <span><strong>Multi-Metric Triangulation:</strong> Calinski-Harabasz, Silhouette, Davies-Bouldin & Inertia combined to validate optimal cluster count $k=4$.</span>
+              </li>
+              <li style="display: flex; gap: 10px;">
+                <span style="color: var(--accent-emerald);">✔</span>
+                <span><strong>Production Ready:</strong> Sub-second $O(k \cdot d)$ inference latency suitable for real-time scouting engines.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pipeline Workflow -->
+      <h3 style="font-size: 1.15rem; color: #fff; margin-bottom: 16px;">End-to-End Analytical Workflow</h3>
+      <div class="pipeline-wrapper">
+        <div class="pipeline-step">
+          <div class="step-idx">Stage 01</div>
+          <div class="step-name">Data Ingestion</div>
+          <div class="step-desc">18,278 records audited for missing values, wage distributions, and duplicate identifiers.</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-idx">Stage 02</div>
+          <div class="step-name">Feature Engineering</div>
+          <div class="step-desc">Regex arithmetic evaluation of positional attributes, bilateral work rate mapping, unit conversion.</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-idx">Stage 03</div>
+          <div class="step-name">Standardization & PCA</div>
+          <div class="step-desc">37 dimensions transformed via StandardScaler; Scree analysis identifies 9 primary components.</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-idx">Stage 04</div>
+          <div class="step-name">4x ML Modeling</div>
+          <div class="step-desc">Benchmarking K-Means, Mini-Batch K-Means, GMM, and Hierarchical Agglomerative models.</div>
+        </div>
+        <div class="pipeline-step">
+          <div class="step-idx">Stage 05</div>
+          <div class="step-name">Business Insights</div>
+          <div class="step-desc">Quantitative resolution of national pipelines, player aging curves, and offensive wage paradoxes.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: WHAT ARE WE SOLVED? (CORE BUSINESS QUESTIONS) -->
+    <section id="business-solutions">
+      <div class="section-header">
+        <span class="section-badge">Empirical Results</span>
+        <h2 class="section-title">What Did We Solve?</h2>
+        <p class="section-subtitle">
+          Direct statistical resolutions to the primary project business questions, backed by empirical data and economic reasoning.
+        </p>
+      </div>
+
+      <div class="grid-3">
+
+        <!-- Question 1 Card -->
+        <div class="solution-card">
+          <div class="q-number-pill q-pill-1">Task 3 • Question 1</div>
+          <h3 class="q-title">Top 10 Global Talent Producing Nations</h3>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">
+            Which countries are producing the most footballers playing at this level?
+          </p>
+
+          <div class="q-verdict cyan-verdict">
+            <div class="verdict-heading">Definitive Finding</div>
+            <div class="verdict-text">
+              England leads globally with 1,667 players (9.12%), followed by Germany (1,216; 6.65%) and Spain (1,035; 5.66%).
+            </div>
+          </div>
+
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 12px;">
+            <strong>Key Driver:</strong> Tiered professional league infrastructure (Premier League through League Two) enables massive domestic roster volume, while France (71.3 avg rating) and Spain (70.1 avg rating) lead in elite talent density.
+          </p>
+
+          <div class="chart-container" style="height: 240px;">
+            <canvas id="chartCountries"></canvas>
+          </div>
+        </div>
+
+        <!-- Question 2 Card -->
+        <div class="solution-card">
+          <div class="q-number-pill q-pill-2">Task 3 • Question 2</div>
+          <h3 class="q-title">Player Aging Curve & Ceiling</h3>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">
+            What is the age after which a professional footballer stops improving?
+          </p>
+
+          <div class="q-verdict">
+            <div class="verdict-heading">Definitive Finding</div>
+            <div class="verdict-text">
+              Players empirically STOP IMPROVING after age 28 to 29.
+            </div>
+          </div>
+
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 12px;">
+            <strong>Lifecycle Trajectory:</strong>
+            Rapid growth occurs at ages 16–22 (+8.4 to +19.4 points). By age 27, average growth potential drops below 1.0 (0.94). At age 28, it drops to 0.39, and by age 31, growth potential is strictly 0.00.
+          </p>
+
+          <div class="chart-container" style="height: 240px;">
+            <canvas id="chartAge"></canvas>
+          </div>
+        </div>
+
+        <!-- Question 3 Card -->
+        <div class="solution-card">
+          <div class="q-number-pill q-pill-3">Task 3 • Question 3</div>
+          <h3 class="q-title">Offensive Compensation Paradox</h3>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">
+            Which offensive player gets paid the most: Striker, Right-Winger, or Left-Winger?
+          </p>
+
+          <div class="q-verdict gold-verdict">
+            <div class="verdict-heading">The Mean vs. Median Paradox</div>
+            <div class="verdict-text">
+              Right-Wingers lead in Mean Wage (€15,848), but Strikers dominate Median Wage (€4,000).
+            </div>
+          </div>
+
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 12px;">
+            <strong>Superstar Skewness Effect:</strong> Outlier mega-earners (Messi €565k/wk at RW, Hazard €470k/wk at LW) inflate wingers' arithmetic mean. Strikers (2,582 players) have universal market demand across all tiers, securing higher median pay.
+          </p>
+
+          <div class="chart-container" style="height: 240px;">
+            <canvas id="chartWage"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Quantitative Summary Table for Q1-Q3 -->
+      <div class="glass-panel" style="margin-top: 28px;">
+        <h3 style="font-size: 1.15rem; color: #fff; margin-bottom: 16px;">Offensive Wage & Position Breakdown Matrix</h3>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Offensive Position</th>
+                <th>Player Cohort</th>
+                <th>Mean Weekly Wage</th>
+                <th>Median Weekly Wage</th>
+                <th>Top 10% Wage Threshold</th>
+                <th>Highest Paid Player in Position</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Right Winger (RW)</strong></td>
+                <td>369 players</td>
+                <td><span class="pill-tag pill-gold">€15,848 / wk</span></td>
+                <td>€3,000 / wk</td>
+                <td>€35,000 / wk</td>
+                <td><strong>Lionel Messi</strong> (€565,000 / wk)</td>
+              </tr>
+              <tr>
+                <td><strong>Left Winger (LW)</strong></td>
+                <td>378 players</td>
+                <td><span class="pill-tag pill-gold">€14,037 / wk</span></td>
+                <td>€3,000 / wk</td>
+                <td>€33,000 / wk</td>
+                <td><strong>Eden Hazard</strong> (€470,000 / wk)</td>
+              </tr>
+              <tr>
+                <td><strong>Striker (ST / RS / LS)</strong></td>
+                <td>2,582 players</td>
+                <td>€10,153 / wk</td>
+                <td><span class="pill-tag pill-green">€4,000 / wk (+33%)</span></td>
+                <td>€25,000 / wk</td>
+                <td><strong>Cristiano Ronaldo</strong> (€405,000 / wk)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: UNSUPERVISED MACHINE LEARNING & MODEL BENCHMARK -->
+    <section id="machine-learning">
+      <div class="section-header">
+        <span class="section-badge">Model Evaluation Matrix</span>
+        <h2 class="section-title">Unsupervised Clustering Exploration</h2>
+        <p class="section-subtitle">
+          We trained and rigorously benchmarked four distinct clustering architectures on the standardized 37-dimensional outfield player skill space across mathematical cohesion, separation, and production efficiency.
+        </p>
+      </div>
+
+      <div class="glass-panel">
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Model Architecture</th>
+                <th>Clusters (k)</th>
+                <th>Silhouette Score</th>
+                <th>Calinski-Harabasz</th>
+                <th>Davies-Bouldin</th>
+                <th>Fit Latency</th>
+                <th>Inference Complexity</th>
+                <th>Production Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background: rgba(0, 245, 160, 0.05); border-left: 3px solid var(--accent-emerald);">
+                <td><strong>Mini-Batch K-Means</strong> (Selected)</td>
+                <td>k = 4</td>
+                <td><span class="pill-tag pill-cyan">0.1622</span></td>
+                <td><strong>4,366.0</strong></td>
+                <td><span class="pill-tag pill-green">1.7213</span></td>
+                <td>262.7 ms</td>
+                <td><code style="font-family: var(--font-mono); color: var(--accent-emerald);">O(k · d) Constant</code></td>
+                <td><span class="pill-tag pill-green">10 / 10 (Winner)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Standard K-Means</strong></td>
+                <td>k = 4</td>
+                <td><span class="pill-tag pill-cyan">0.1638</span></td>
+                <td><strong>4,384.0</strong></td>
+                <td><span class="pill-tag pill-green">1.7178</span></td>
+                <td>273.3 ms</td>
+                <td><code style="font-family: var(--font-mono); color: var(--accent-emerald);">O(k · d) Constant</code></td>
+                <td><span class="pill-tag pill-green">9.5 / 10</span></td>
+              </tr>
+              <tr>
+                <td><strong>Gaussian Mixture Model (GMM)</strong></td>
+                <td>k = 4</td>
+                <td>0.1534</td>
+                <td>4,299.0</td>
+                <td>1.7476</td>
+                <td>160.2 ms</td>
+                <td><code style="font-family: var(--font-mono); color: var(--accent-gold);">O(k · d²) Moderate</code></td>
+                <td><span class="pill-tag pill-gold">7.5 / 10</span></td>
+              </tr>
+              <tr>
+                <td><strong>Agglomerative Hierarchical</strong></td>
+                <td>k = 4</td>
+                <td>0.1347</td>
+                <td>827.0</td>
+                <td>1.8743</td>
+                <td>537.2 ms (Sample)</td>
+                <td><code style="font-family: var(--font-mono); color: var(--accent-rose);">O(N²) Prohibitive</code></td>
+                <td><span class="pill-tag pill-purple">4.0 / 10</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="margin-top: 24px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+          <div style="font-size: 0.9rem; color: var(--text-muted); flex: 1;">
+            <strong style="color: #fff;">Mathematical Interpretation:</strong> Higher Silhouette (>0.16) and Calinski-Harabasz (>4,300) combined with lower Davies-Bouldin (<1.72) designate K-Means and Mini-Batch K-Means as the definitive geometric winners. Hierarchical clustering fails to scale due to pairwise quadratic memory $O(N^2)$.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: TACTICAL ARCHETYPES DISCOVERED -->
+    <section id="archetypes">
+      <div class="section-header">
+        <span class="section-badge">Centroid Profiling</span>
+        <h2 class="section-title">Discovered Tactical Archetypes</h2>
+        <p class="section-subtitle">
+          Mathematical centroids translated into actionable football scouting profiles. Each cluster corresponds to a distinct real-world athletic and tactical identity.
+        </p>
+      </div>
+
+      <div class="grid-2" style="margin-bottom: 24px;">
+        
+        <!-- Archetype 0 -->
+        <div class="archetype-card">
+          <span class="archetype-badge pill-purple">Cluster 3 • 4,205 Players</span>
+          <h3 class="archetype-title">Pure Clinical Strikers & Creators</h3>
+          <p class="archetype-players">
+            <strong>Key Examples:</strong> L. Messi (94), C. Ronaldo (93), Neymar Jr (92), K. De Bruyne (91), E. Hazard (91), M. Salah (90)
+          </p>
+          <div class="stat-bar-group">
+            <div class="stat-bar-item">
+              <span class="stat-label">Finishing & Shooting</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 68.4%;"></div></div>
+              <span class="stat-val">68.4</span>
+            </div>
+            <div class="stat-bar-item">
+              <span class="stat-label">Dribbling & Ball Control</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 73.7%;"></div></div>
+              <span class="stat-val">73.7</span>
+            </div>
+            <div class="stat-bar-item">
+              <span class="stat-label">Pace & Acceleration</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 72.9%;"></div></div>
+              <span class="stat-val">72.9</span>
+            </div>
+            <div class="stat-bar-item">
+              <span class="stat-label">Passing & Playmaking</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 67.9%;"></div></div>
+              <span class="stat-val">67.9</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Archetype 1 -->
+        <div class="archetype-card">
+          <span class="archetype-badge pill-cyan">Cluster 1 • 3,217 Players</span>
+          <h3 class="archetype-title">Dominant Defensive Stoppers</h3>
+          <p class="archetype-players">
+            <strong>Key Examples:</strong> K. Koulibaly (89), G. Chiellini (89), D. Godín (88), K. Manolas (85), S. Savić (82)
+          </p>
+          <div class="stat-bar-group">
+            <div class="stat-bar-item">
+              <span class="stat-label">Defending & Tackling</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 60.8%; background: linear-gradient(90deg, #00f2fe, #4facfe);"></div></div>
+              <span class="stat-val">60.8</span>
+            </div>
+            <div class="stat-bar-item">
+              <span class="stat-label">Physical Power & Aerial</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 64.8%; background: linear-gradient(90deg, #00f2fe, #4facfe);"></div></div>
+              <span class="stat-val">64.8</span>
+            </div>
+            <div class="stat-bar-item">
+              <span class="stat-label">Pace & Acceleration</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 58.3%;"></div></div>
+              <span class="stat-val">58.3</span>
+            </div>
+            <div class="stat-bar-item">
+              <span class="stat-label">Finishing & Shooting</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 33.7%;"></div></div>
+              <span class="stat-val">33.7</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Archetype 2 -->
+        <div class="archetype-card">
+          <span class="archetype-badge pill-green">Cluster 0 • 4,145 Players</span>
+          <h3 class="archetype-title">Engine Midfielders & Wingbacks</h3>
+          <p class="archetype-players">
+            <strong>Key Profile:</strong> High mobility, stamina, transition playmakers and active fullbacks.
+          </p>
+          <div class="stat-bar-group">
+            <div class="stat-bar-item">
+              <span class="stat-label">Pace & Acceleration</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 70.9%; background: linear-gradient(90deg, #00f5a0, #00f2fe);"></div></div>
+              <span class="stat-val">70.9</span>
+            </div>
+            <div class="stat-bar-item">
+              <span class="stat-label">Dribbling & Ball Control</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 64.5%; background: linear-gradient(90deg, #00f5a0, #00f2fe);"></div></div>
+              <span class="stat-val">64.5</span>
+            </div>
+            <div class="stat-bar-item">
+              <span class="stat-label">Finishing & Shooting</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 57.2%;"></div></div>
+              <span class="stat-val">57.2</span>
+            </div>
+            <div class="stat-bar-item">
+              <span class="stat-label">Defending & Tackling</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 29.4%;"></div></div>
+              <span class="stat-val">29.4</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Archetype 3 -->
+        <div class="archetype-card">
+          <span class="archetype-badge pill-gold">Cluster 2 • 4,675 Players</span>
+          <h3 class="archetype-title">Ball-Playing Anchors & Box-to-Box</h3>
+          <p class="archetype-players">
+            <strong>Key Profile:</strong> Balanced dual-threat players boasting solid defensive recovery and composure in buildup.
+          </p>
+          <div class="stat-bar-group">
+            <div class="stat-bar-item">
+              <span class="stat-label">Physical Power & Aerial</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 66.7%; background: linear-gradient(90deg, #ffb703, #fb8500);"></div></div>
+              <span class="stat-val">66.7</span>
+            </div>
+            <div class="stat-bar-item">
+              <span class="stat-label">Defending & Tackling</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 63.8%; background: linear-gradient(90deg, #ffb703, #fb8500);"></div></div>
+              <span class="stat-val">63.8</span>
+            </div>
+            <div class="stat-bar-item">
+              <span class="stat-label">Dribbling & Ball Control</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 63.6%;"></div></div>
+              <span class="stat-val">63.6</span>
+            </div>
+            <div class="stat-bar-item">
+              <span class="stat-label">Passing & Playmaking</span>
+              <div class="stat-bar-outer"><div class="stat-bar-fill" style="width: 60.0%;"></div></div>
+              <span class="stat-val">60.0</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Radar Comparison Chart -->
+      <div class="glass-panel">
+        <h3 style="font-size: 1.2rem; color: #fff; margin-bottom: 12px;">Multi-Dimensional Tactical Radar Comparison</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
+          Comparing centroid coordinates across six primary tactical skill pillars.
+        </p>
+        <div style="max-width: 680px; margin: 0 auto; height: 380px;">
+          <canvas id="chartRadar"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: 7 ENGINEERING CHALLENGES FACED & OVERCOME -->
+    <section id="challenges">
+      <div class="section-header">
+        <span class="section-badge">Data Science Rigor</span>
+        <h2 class="section-title">7 Engineering Challenges & Technical Solutions</h2>
+        <p class="section-subtitle">
+          Real-world sports simulation datasets possess domain quirks, string-encoded attributes, and extreme financial skewness. Here is how each hurdle was solved.
+        </p>
+      </div>
+
+      <!-- Challenge 1 -->
+      <div class="challenge-card active">
+        <div class="challenge-header" onclick="toggleCard(this)">
+          <div class="challenge-title-box">
+            <span class="challenge-number">CH-01</span>
+            <span class="challenge-title">Goalkeeper vs. Outfield Skill Disparity</span>
+          </div>
+          <span class="challenge-chevron">▼</span>
+        </div>
+        <div class="challenge-body">
+          Goalkeepers have completely missing or zero values across outfield technical skills (e.g. crossing, finishing, slide tackle), while outfield players lack goalkeeping metrics. Zero-imputation would artificially drag down variances and distort distance calculations.
+          <div class="challenge-solution-box">
+            <strong>Solution Implemented:</strong> Structural Dataset Partitioning. Goalkeepers (2,036) were separated into an independent analysis cohort, while tactical skill clustering was executed strictly on the 16,242 outfield players with the complete 37-dimensional skill matrix.
+          </div>
+        </div>
+      </div>
+
+      <!-- Challenge 2 -->
+      <div class="challenge-card">
+        <div class="challenge-header" onclick="toggleCard(this)">
+          <div class="challenge-title-box">
+            <span class="challenge-number">CH-02</span>
+            <span class="challenge-title">Composite String Formulas in Positional Ratings</span>
+          </div>
+          <span class="challenge-chevron">▼</span>
+        </div>
+        <div class="challenge-body">
+          Positional skill columns (<code style="color:var(--accent-cyan);">'st'</code>, <code style="color:var(--accent-cyan);">'rw'</code>, etc.) were encoded as algebraic strings such as <code style="color:var(--accent-cyan);">'89+2'</code> or <code style="color:var(--accent-cyan);">'74-1'</code>, representing base ratings plus in-form modifiers.
+          <div class="challenge-solution-box">
+            <strong>Solution Implemented:</strong> Vectorized Regular Expression Evaluator (<code style="font-family:var(--font-mono);">parse_positional_rating()</code>) that parses split operators, evaluates effective net numerical capabilities, and outputs clean floating-point features.
+          </div>
+        </div>
+      </div>
+
+      <!-- Challenge 3 -->
+      <div class="challenge-card">
+        <div class="challenge-header" onclick="toggleCard(this)">
+          <div class="challenge-title-box">
+            <span class="challenge-number">CH-03</span>
+            <span class="challenge-title">Target Leakage & Feature Dominance Prevention</span>
+          </div>
+          <span class="challenge-chevron">▼</span>
+        </div>
+        <div class="challenge-body">
+          Composite scores like <code style="color:var(--accent-cyan);">overall</code> and <code style="color:var(--accent-cyan);">international_reputation</code> are synthetic indicators of media standing. If included, Euclidean distance partitions players strictly into "high overall vs. low overall", obscuring playing style archetypes.
+          <div class="challenge-solution-box">
+            <strong>Solution Implemented:</strong> Deliberate Feature Space Isolation. Excluded <code style="font-family:var(--font-mono);">overall</code> and <code style="font-family:var(--font-mono);">international_reputation</code> from clustering matrix $X$. Retained them exclusively for post-hoc validation and wage correlation.
+          </div>
+        </div>
+      </div>
+
+      <!-- Challenge 4 -->
+      <div class="challenge-card">
+        <div class="challenge-header" onclick="toggleCard(this)">
+          <div class="challenge-title-box">
+            <span class="challenge-number">CH-04</span>
+            <span class="challenge-title">Compound Ordinal Work Rate Encoding</span>
+          </div>
+          <span class="challenge-chevron">▼</span>
+        </div>
+        <div class="challenge-body">
+          Player work rates were bundled into compound strings (e.g. <code style="color:var(--accent-cyan);">'High/Medium'</code>, <code style="color:var(--accent-cyan);">'Medium/Low'</code>), combining offensive and defensive behavioral tendencies.
+          <div class="challenge-solution-box">
+            <strong>Solution Implemented:</strong> Bilateral Feature Splitting & Ordinal Real-Valued Mapping into <code style="font-family:var(--font-mono);">AttackWorkRate</code> and <code style="font-family:var(--font-mono);">DefenseWorkRate</code> (Low: 0.0, Medium: 0.5, High: 1.0), enabling models to distinguish poachers from box-to-box midfielders.
+          </div>
+        </div>
+      </div>
+
+      <!-- Challenge 5 -->
+      <div class="challenge-card">
+        <div class="challenge-header" onclick="toggleCard(this)">
+          <div class="challenge-title-box">
+            <span class="challenge-number">CH-05</span>
+            <span class="challenge-title">High Dimensionality & Multicollinearity (37+ Features)</span>
+          </div>
+          <span class="challenge-chevron">▼</span>
+        </div>
+        <div class="challenge-body">
+          Technical attributes (e.g., sliding tackle vs. standing tackle, short passing vs. ball control) exhibit severe correlation ($r > 0.85$), risking distance distortion in high-dimensional Euclidean space.
+          <div class="challenge-solution-box">
+            <strong>Solution Implemented:</strong> StandardScaler unit normalization followed by Principal Component Analysis (PCA). Scree plot analysis showed that 9 orthogonal principal components explain >80% of cumulative variance.
+          </div>
+        </div>
+      </div>
+
+      <!-- Challenge 6 -->
+      <div class="challenge-card">
+        <div class="challenge-header" onclick="toggleCard(this)">
+          <div class="challenge-title-box">
+            <span class="challenge-number">CH-06</span>
+            <span class="challenge-title">Unsupervised Evaluation Without Ground-Truth Labels</span>
+          </div>
+          <span class="challenge-chevron">▼</span>
+        </div>
+        <div class="challenge-body">
+          Lacking predefined tactical category labels, supervised classification accuracy and ROC-AUC cannot be calculated. Single-metric choices can lead to degenerate cluster splits.
+          <div class="challenge-solution-box">
+            <strong>Solution Implemented:</strong> Multi-Metric Triangulation combining Inertia (Elbow method), Silhouette Score, Calinski-Harabasz Index, and Davies-Bouldin Index across $k \in [2, 10]$, validated alongside football domain tactical interpretability.
+          </div>
+        </div>
+      </div>
+
+      <!-- Challenge 7 -->
+      <div class="challenge-card">
+        <div class="challenge-header" onclick="toggleCard(this)">
+          <div class="challenge-title-box">
+            <span class="challenge-number">CH-07</span>
+            <span class="challenge-title">Extreme Right-Skewness in Professional Wages</span>
+          </div>
+          <span class="challenge-chevron">▼</span>
+        </div>
+        <div class="challenge-body">
+          Weekly compensation follows a power-law distribution. Superstar players earn up to €565,000/week while median professional wage is €4,000/week, rendering standard arithmetic mean misleading.
+          <div class="challenge-solution-box">
+            <strong>Solution Implemented:</strong> Dual Parametric/Non-Parametric Reporting. Evaluated both Mean and Median across offensive cohorts, explaining why wingers lead in mean wage while strikers lead in median compensation.
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SECTION 6: PRODUCTION STRATEGY & BUSINESS RECOMMENDATIONS -->
+    <section id="production">
+      <div class="section-header">
+        <span class="section-badge">Strategic Takeaways</span>
+        <h2 class="section-title">Production Recommendation & Recruitment Playbook</h2>
+        <p class="section-subtitle">
+          How clubs, scouting departments, and sports technology platforms can implement these findings in production.
+        </p>
+      </div>
+
+      <div class="recommendation-banner">
+        <span class="rec-badge">Production Architecture Recommendation</span>
+        <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 12px;">Deploy Mini-Batch K-Means with Precomputed Centroids</h3>
+        <p style="color: #d1fae5; line-height: 1.65; margin-bottom: 16px;">
+          For production scouting applications, gaming engines, and mobile scout apps, <strong>Mini-Batch K-Means</strong> delivers the ideal operational profile:
+        </p>
+        <div class="grid-3" style="gap: 16px; margin-top: 20px;">
+          <div style="background: rgba(0,0,0,0.25); padding: 16px; border-radius: var(--radius-sm); border: 1px solid rgba(16, 185, 129, 0.2);">
+            <div style="font-weight: 700; color: #fff; margin-bottom: 4px;">Sub-Millisecond Inference</div>
+            <div style="color: #a7f3d0; font-size: 0.85rem;">$O(k \cdot d)$ constant time complexity makes real-time player reassignment instantaneous as match ratings update.</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.25); padding: 16px; border-radius: var(--radius-sm); border: 1px solid rgba(16, 185, 129, 0.2);">
+            <div style="font-weight: 700; color: #fff; margin-bottom: 4px;">Minimal Memory Overhead</div>
+            <div style="color: #a7f3d0; font-size: 0.85rem;">Requires only storing a $(4 \times 37)$ centroid float matrix, avoiding the gigabyte-scale pairwise distance matrices of hierarchical models.</div>
+          </div>
+          <div style="background: rgba(0,0,0,0.25); padding: 16px; border-radius: var(--radius-sm); border: 1px solid rgba(16, 185, 129, 0.2);">
+            <div style="font-weight: 700; color: #fff; margin-bottom: 4px;">Incremental Online Updates</div>
+            <div style="color: #a7f3d0; font-size: 0.85rem;">Mini-batch gradients permit real-time model retraining on weekly match performance updates without full-dataset recalibration.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tactical Recruitment Playbook -->
+      <div class="glass-panel" style="margin-top: 28px;">
+        <h3 style="font-size: 1.25rem; color: #fff; margin-bottom: 16px;">Executive Recruitment Strategy Summary</h3>
+        <div class="grid-3">
+          <div style="background: rgba(255, 255, 255, 0.02); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <h4 style="color: var(--accent-cyan); margin-bottom: 8px;">1. Scouting Window</h4>
+            <p style="color: var(--text-muted); font-size: 0.88rem;">
+              Acquire players in the <strong>Ages 18–22 bracket</strong> where developmental headroom ranges from +10 to +19 rating points. Avoid long-term contract extensions exceeding age 29.
+            </p>
+          </div>
+          <div style="background: rgba(255, 255, 255, 0.02); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <h4 style="color: var(--accent-emerald); margin-bottom: 8px;">2. Payroll Optimization</h4>
+            <p style="color: var(--text-muted); font-size: 0.88rem;">
+              Do not overpay for wingers based on arithmetic averages. Winger wages are skewed by elite outliers. Exploit the high median value of clinical center-forwards across tier-2 and tier-3 leagues.
+            </p>
+          </div>
+          <div style="background: rgba(255, 255, 255, 0.02); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+            <h4 style="color: var(--accent-purple); margin-bottom: 8px;">3. Style-Based Recruitment</h4>
+            <p style="color: var(--text-muted); font-size: 0.88rem;">
+              Replace arbitrary positional tags with quantitative archetype signatures (Stoppers, Playmakers, Engine Midfielders, Target Forwards) to find high-performing budget replacements.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="container">
+        <p style="color: var(--text-muted); margin-bottom: 8px;">
+          <strong>PRCP-1004: FIFA 20 Player Skill Analysis & Tactical Intelligence System</strong>
+        </p>
+        <p style="font-size: 0.82rem; color: var(--text-dim);">
+          Developed with Python, Scikit-Learn, Pandas, NumPy, Matplotlib & Seaborn • Generated Project Intelligence Dashboard
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Interactive Logic & Chart.js Config -->
+  <script>
+    // Accordion Toggle
+    function toggleCard(header) {
+      const card = header.parentElement;
+      card.classList.toggle('active');
+    }
+
+    // Chart.js Global Defaults
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.font.family = "'Outfit', sans-serif";
+
+    // Chart 1: Top 10 Countries (Question 1)
+    const ctxCountries = document.getElementById('chartCountries').getContext('2d');
+    new Chart(ctxCountries, {
+      type: 'bar',
+      data: {
+        labels: ['England', 'Germany', 'Spain', 'France', 'Argentina', 'Brazil', 'Italy', 'Colombia', 'Japan', 'Netherlands'],
+        datasets: [{
+          label: 'Number of Players',
+          data: [1667, 1216, 1035, 984, 886, 824, 732, 591, 453, 438],
+          backgroundColor: [
+            'rgba(0, 242, 254, 0.8)',
+            'rgba(79, 172, 254, 0.7)',
+            'rgba(0, 245, 160, 0.7)',
+            'rgba(157, 78, 221, 0.7)',
+            'rgba(255, 183, 3, 0.7)',
+            'rgba(255, 77, 109, 0.7)',
+            'rgba(79, 172, 254, 0.5)',
+            'rgba(0, 245, 160, 0.5)',
+            'rgba(157, 78, 221, 0.5)',
+            'rgba(255, 183, 3, 0.5)'
+          ],
+          borderColor: 'rgba(255, 255, 255, 0.1)',
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              afterLabel: function(context) {
+                const total = 18278;
+                const pct = ((context.parsed.y / total) * 100).toFixed(2);
+                return `Share: ${pct}% of global database`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { grid: { color: 'rgba(255, 255, 255, 0.05)' } }
+        }
+      }
+    });
+
+    // Chart 2: Age vs Overall & Growth Potential (Question 2)
+    const ctxAge = document.getElementById('chartAge').getContext('2d');
+    new Chart(ctxAge, {
+      type: 'line',
+      data: {
+        labels: ['16', '18', '20', '22', '24', '26', '28', '30', '32', '34', '36+'],
+        datasets: [
+          {
+            label: 'Mean Overall Rating',
+            data: [56.4, 57.3, 61.2, 64.6, 67.0, 68.4, 69.2, 69.4, 69.1, 68.6, 67.2],
+            borderColor: '#00f5a0',
+            backgroundColor: 'rgba(0, 245, 160, 0.1)',
+            fill: true,
+            tension: 0.3,
+            yAxisID: 'y'
+          },
+          {
+            label: 'Mean Growth Potential (Pts)',
+            data: [19.4, 16.6, 12.2, 8.4, 5.3, 2.3, 0.39, 0.12, 0.0, 0.0, 0.0],
+            borderColor: '#ff4d6d',
+            backgroundColor: 'transparent',
+            borderDash: [5, 5],
+            tension: 0.3,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: {
+            mode: 'index',
+            intersect: false
+          }
+        },
+        scales: {
+          x: { title: { display: true, text: 'Player Age' }, grid: { display: false } },
+          y: {
+            title: { display: true, text: 'Overall Rating' },
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            min: 50,
+            max: 75
+          },
+          y1: {
+            position: 'right',
+            title: { display: true, text: 'Growth Headroom (Pts)' },
+            grid: { display: false },
+            min: 0,
+            max: 22
+          }
+        }
+      }
+    });
+
+    // Chart 3: Offensive Wage Comparison - Mean vs Median (Question 3)
+    const ctxWage = document.getElementById('chartWage').getContext('2d');
+    new Chart(ctxWage, {
+      type: 'bar',
+      data: {
+        labels: ['Right Winger (RW)', 'Left Winger (LW)', 'Striker (ST/RS/LS)'],
+        datasets: [
+          {
+            label: 'Mean Weekly Wage (€)',
+            data: [15848, 14037, 10153],
+            backgroundColor: 'rgba(255, 183, 3, 0.75)',
+            borderRadius: 6
+          },
+          {
+            label: 'Median Weekly Wage (€)',
+            data: [3000, 3000, 4000],
+            backgroundColor: 'rgba(0, 245, 160, 0.75)',
+            borderRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: {
+            callbacks: {
+              label: function(c) {
+                return `${c.dataset.label}: €${c.parsed.y.toLocaleString()}`;
+              }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+            ticks: {
+              callback: function(v) { return '€' + (v/1000) + 'k'; }
+            }
+          }
+        }
+      }
+    });
+
+    // Chart 4: Radar Chart for 4 Clusters
+    const ctxRadar = document.getElementById('chartRadar').getContext('2d');
+    new Chart(ctxRadar, {
+      type: 'radar',
+      data: {
+        labels: ['Finishing & Shooting', 'Dribbling & Control', 'Passing & Playmaking', 'Pace & Acceleration', 'Defending & Tackling', 'Power & Aerial'],
+        datasets: [
+          {
+            label: 'Pure Clinical Strikers (Cluster 3)',
+            data: [68.4, 73.7, 67.9, 72.9, 49.0, 66.4],
+            borderColor: '#9d4edd',
+            backgroundColor: 'rgba(157, 78, 221, 0.2)',
+            pointBackgroundColor: '#9d4edd'
+          },
+          {
+            label: 'Defensive Stoppers (Cluster 1)',
+            data: [33.7, 49.0, 44.6, 58.3, 60.8, 64.8],
+            borderColor: '#00f2fe',
+            backgroundColor: 'rgba(0, 242, 254, 0.2)',
+            pointBackgroundColor: '#00f2fe'
+          },
+          {
+            label: 'Engine Midfielders (Cluster 0)',
+            data: [57.2, 64.5, 52.8, 70.9, 29.4, 57.6],
+            borderColor: '#00f5a0',
+            backgroundColor: 'rgba(0, 245, 160, 0.2)',
+            pointBackgroundColor: '#00f5a0'
+          },
+          {
+            label: 'Ball-Playing Anchors (Cluster 2)',
+            data: [50.5, 63.6, 60.0, 66.6, 63.8, 66.7],
+            borderColor: '#ffb703',
+            backgroundColor: 'rgba(255, 183, 3, 0.2)',
+            pointBackgroundColor: '#ffb703'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        elements: {
+          line: { borderWidth: 2 }
+        },
+        scales: {
+          r: {
+            angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
+            grid: { color: 'rgba(255, 255, 255, 0.08)' },
+            pointLabels: { color: '#cbd5e1', font: { size: 12, weight: '600' } },
+            ticks: { display: false, backdropColor: 'transparent' },
+            suggestedMin: 25,
+            suggestedMax: 80
+          }
+        },
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 12, padding: 14 } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

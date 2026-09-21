@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/Python-3.9%2B-blue.svg)](https://www.python.org/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-Clustering%20%26%20PCA-orange.svg)](https://scikit-learn.org/)
 [![Pandas](https://img.shields.io/badge/Pandas-Data%20Analysis-150458.svg)](https://pandas.pydata.org/)
-[![Dashboard](https://img.shields.io/badge/Interactive-Web%20Dashboard%20(HTML5%2FCSS3)-00f5a0.svg)](index.html)
+[![Dashboard](https://img.shields.io/badge/Interactive-Web%20Dashboard%20(HTML5%2FCSS3)-00f5a0.svg)](https://babiazees007.github.io/FIFA_20_Player_Skill_analysis/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 An end-to-end sports analytics and machine learning system evaluating **18,278 professional football players** from EA Sports' FIFA 20 dataset. This project addresses real-world sports scouting challenges, eliminates target leakage in positional clustering, answers high-impact recruitment and economic compensation questions, and benchmarks four unsupervised machine learning algorithms for production deployment.

@@ -43,7 +43,7 @@ Modern football recruitment is often plagued by subjective scouting biases, cogn
 
 ## 🌐 Interactive Web Dashboard (`index.html`)
 
-This repository includes a modern, zero-dependency interactive HTML5/CSS3/JavaScript dashboard: [`index.html`](index.html).
+This repository includes a modern, zero-dependency interactive HTML5/CSS3/JavaScript dashboard: https://babiazees007.github.io/FIFA_20_Player_Skill_analysis/
 
 ### Key Features:
 - **Interactive Visualizations**: Powered by Chart.js (National Player Rankings, Age vs. Growth Curve, Offensive Compensation Comparison, and 6-Axis Tactical Radar).
@@ -51,7 +51,7 @@ This repository includes a modern, zero-dependency interactive HTML5/CSS3/JavaSc
 - **Accordion Architecture**: Interactive drill-down into the 7 engineering challenges and mathematical solutions.
 - **Glassmorphic UEFA Dark-Mode Theme**: Styled with modern typography (Outfit, JetBrains Mono) and dynamic responsive layouts.
 
-> **How to view**: Double-click [`index.html`](index.html) or open it directly in any web browser!
+> **How to view**: open it directly in any web browser "https://babiazees007.github.io/FIFA_20_Player_Skill_analysis/"!
 
 ---
 
